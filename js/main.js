@@ -17,7 +17,8 @@ const COLORS = {
   
   /*----- event listeners -----*/
   document.getElementById('markers').addEventListener('click', handleDrop);
-  
+  playAgainBtn.addEventListener('click', init);
+
   /*----- functions -----*/
   init();
   
@@ -45,17 +46,38 @@ const COLORS = {
     // Get the index of the marker
     const colIdx = markerEls.indexOf(evt.target);
     // Create a "shortcut" variable to the column that needs to be update
-    const colArr = board[colIdx]
-    console.log(colIdx)
+    const colArr = board[colIdx];
     // Get index of first available cell (null)
     const rowIdx = colArr.indexOf(null);
-    
-  
-  
+    // Update the board's state
+    colArr[rowIdx] = turn;
+    winner = getWinner(colIdx, rowIdx);
+    turn *= -1;
     render();
   }
   
+  // Return null (no winner), 1/-1 if player wins, 'Tie' if a tie
+  function getWinner(colIdx, rowIdx) {
+    return checkVertical(colIdx, rowIdx) // || checkHorizontal()
+  }
   
+  function checkVertical(colIdx, rowIdx) {
+    const numBelow = countAdj(colIdx, rowIdx, 0, -1);
+  }
+  
+  function countAdj(colIdx, rowIdx, colOffset, rowOffset) {
+    let count = 0;
+    colIdx += colOffset;
+    rowIdx += rowOffset;
+    // Always use a while loop if you can't tell how many 
+    // times we need to loop (iterate)
+    while (board[colIdx] && board[colIdx][rowIdx] === turn) {
+      count++;
+      colIdx += colOffset;
+      rowIdx += rowOffset;
+    }
+    return count;
+  }
   // Visualize all state and other info (like messaging)
   // in the DOM
   function render() {
